@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - anime
   workflow_dispatch:
 
 jobs:

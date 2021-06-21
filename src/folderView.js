@@ -50,8 +50,8 @@ export async function renderFolderView(items, path, request) {
     )
 
   const intro = `<div class="intro markdown-body" style="text-align: left; margin-top: 2rem;">
-                    <h2>Yoo, I'm SiHuan 👋</h2>
-                    <p>This is SiHuan's OneDrive public directory listing. Feel free to download any files that you find useful. Reach me at: sihuan [at] sakuya [dot] love.</p>
+                    <h2>Hi, Here are some animes! 👋</h2>
+                    <p>This is a OneDrive anime directory listing. <a href="README.md">👉 Some Tips</a></p>
                     <p><a href="https://sakuya.love">Homepage</a> · <a href="https://blog.sakuya.love">Blog</a> · <a href="https://github.com/sihuan">GitHub</a></p>
                   </div>`
 

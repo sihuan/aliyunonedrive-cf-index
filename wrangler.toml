@@ -1,10 +1,10 @@
-name = "storage"
+name = "anime"
 type = "webpack"
 workers_dev = true
 account_id = "13404b9ffe59bca6ac8d761bac02f27f"
 zone_id = "9b61e65c5f70222731a7a7937b393d55"
 kv_namespaces = [
-    { binding = "BUCKET", preview_id = "b530866376614b5b89c0e17354777a4a", id = "a87cf2c94a92459db48f0d4e424d3fc3" }
+    { binding = "BUCKET", preview_id = "34679c17baea434594d6eada3c45cbda", id = "6405e07452d7491e890bcc76b78b86c2" }
 ]
 
 [env.staging]
