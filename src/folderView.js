@@ -4,6 +4,7 @@ import { getClassNameForMimeType, getClassNameForFilename } from 'font-awesome-f
 import { renderHTML } from './render/htmlWrapper'
 import { renderPath } from './render/pathUtil'
 import { renderMarkdown } from './render/mdRenderer'
+import { extensions } from './render/fileExtension'
 
 /**
  * Convert bytes to human readable file size
@@ -39,10 +40,10 @@ export async function renderFolderView(items, path, request) {
 
   const el = (tag, attrs, content) => `<${tag} ${attrs.join(' ')}>${content}</${tag}>`
   const div = (className, content) => el('div', [`class=${className}`], content)
-  const item = (icon, fileName, fileAbsoluteUrl, size, emojiIcon) =>
+  const item = (icon, fileName, fileAbsoluteUrl, size, emojiIcon, noPreview) =>
     el(
       'a',
-      [`href="${fileAbsoluteUrl}"`, 'class="item"', size ? `size="${size}"` : ''],
+      [`href="${fileAbsoluteUrl}"`, 'class="item"', size ? `size="${size}"` : '', noPreview ? 'data-turbolinks="false"' : ''],
       (emojiIcon ? el('i', ['style="font-style: normal"'], emojiIcon) : el('i', [`class="${icon}"`], '')) +
       fileName +
       el('div', ['style="flex-grow: 1;"'], '') +
@@ -51,7 +52,7 @@ export async function renderFolderView(items, path, request) {
 
   const intro = `<div class="intro markdown-body" style="text-align: left; margin-top: 2rem;">
                     <h2>Yoo, I'm SiHuan 👋</h2>
-                    <p>This is SiHuan's OneDrive public directory listing. Feel free to download any files that you find useful. Reach me at: sihuan [at] sakuya [dot] love.</p>
+                    <p>This is SiHuan's AliyunDrive public directory listing. Feel free to download any files that you find useful. Reach me at: sihuan [at] sakuya [dot] love.</p>
                     <p><a href="https://sakuya.love">Homepage</a> · <a href="https://blog.sakuya.love">Blog</a> · <a href="https://github.com/sihuan">GitHub</a></p>
                   </div>`
 
@@ -71,28 +72,28 @@ export async function renderFolderView(items, path, request) {
         items
           .map(i => {
             // Check if the current item is a folder or a file
-            if ('folder' in i) {
+            if ('folder' === i.type) {
               const emoji = emojiRegex().exec(i.name)
               if (emoji && !emoji.index) {
-                return item('', i.name.replace(emoji, '').trim(), `${path}${i.name}/`, i.size, emoji[0])
+                return item('', i.name.replace(emoji, '').trim(), `${path}${i.name}/`, i.updated_at, emoji[0])
               } else {
-                return item('far fa-folder', i.name, `${path}${i.name}/`, i.size)
+                return item('far fa-folder', i.name, `${path}${i.name}/`, i.updated_at)
               }
-            } else if ('file' in i) {
+            } else if ('file' === i.type) {
               // Check if README.md exists
               if (!readmeExists) {
                 // TODO: debugging for README preview rendering
-                console.log(i)
+                // console.log(i)
 
                 readmeExists = i.name.toLowerCase() === 'readme.md'
-                readmeFetchUrl = i['@microsoft.graph.downloadUrl']
+                readmeFetchUrl = i.url
               }
 
               // Render file icons
-              let fileIcon = getClassNameForMimeType(i.file.mimeType)
+              let fileIcon = getClassNameForMimeType(i.mime_type)
+              const extension = i.file_extension
               if (fileIcon === 'fa-file') {
                 // Check for files that haven't been rendered as expected
-                const extension = i.name.split('.').pop()
                 if (extension === 'md') {
                   fileIcon = 'fab fa-markdown'
                 } else if (['7z', 'rar', 'bz2', 'xz', 'tar', 'wim'].includes(extension)) {
@@ -105,7 +106,7 @@ export async function renderFolderView(items, path, request) {
               } else {
                 fileIcon = `far ${fileIcon}`
               }
-              return item(fileIcon, i.name, `${path}${i.name}`, i.size)
+              return item(fileIcon, i.name, `${path}${i.name}`, i.size, '', !(extension in extensions))
             } else {
               console.log(`unknown item type ${i}`)
             }

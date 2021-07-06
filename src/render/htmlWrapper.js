@@ -31,8 +31,9 @@ export function renderHTML(body, pLink, pIdx) {
     <head>
       <meta charset="utf-8" />
       <meta http-equiv="x-ua-compatible" content="ie=edge, chrome=1" />
+      <meta name="referrer" content="no-referrer">
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-      <title>SiHuan's OneDrive</title>
+      <title>SiHuan's AliYunDrive</title>
       <link rel="shortcut icon" type="image/png" sizes="16x16" href="${favicon}" />
       <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.1/css/all.min.css" rel="stylesheet">
       <link href="https://cdn.jsdelivr.net/gh/spencerwooo/onedrive-cf-index@${COMMIT_HASH}/themes/spencer.css" rel="stylesheet">
@@ -49,11 +50,11 @@ export function renderHTML(body, pLink, pIdx) {
       <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
     </head>
     <body>
-      <nav id="navbar" data-turbolinks-permanent><div class="brand">📁 SiHuan's OneDrive Index</div></nav>
+      <nav id="navbar" data-turbolinks-permanent><div class="brand">📁 SiHuan's AliYunDrive Index</div></nav>
       ${body}
       <div class="paginate-container">${pagination(pIdx)}</div>
       <div id="flex-container" data-turbolinks-permanent style="flex-grow: 1;"></div>
-      <footer id="footer" data-turbolinks-permanent><p>Powered by <a href="https://github.com/spencerwooo/onedrive-cf-index">onedrive-cf-index</a>, hosted on <a href="https://www.cloudflare.com/products/cloudflare-workers/">Cloudflare Workers</a>.</p></footer>
+      <footer id="footer" data-turbolinks-permanent><p>Powered by <a href="https://github.com/sihuan/onedrive-cf-index/tree/aliyun">aliyundrive-cf-index</a>, hosted on <a href="https://www.cloudflare.com/products/cloudflare-workers/">Cloudflare Workers</a>.</p></footer>
       <script>
         if (typeof ap !== "undefined" && ap.paused !== true) {
           ap.destroy()

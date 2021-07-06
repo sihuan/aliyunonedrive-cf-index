@@ -13,7 +13,7 @@ import { preview, extensions } from './render/fileExtension'
  * @param {string} lang The markdown code language string, usually just the file extension
  */
 async function renderCodePreview(file, lang) {
-  const resp = await fetch(file['@microsoft.graph.downloadUrl'])
+  const resp = await fetch(file.url)
   const content = await resp.text()
   const toMarkdown = `\`\`\`${lang}\n${content}\n\`\`\``
   const renderedCode = marked(toMarkdown)
@@ -41,7 +41,7 @@ function renderPDFPreview(file) {
             loadingProgress.innerHTML = 'Loading PDF... ' + Math.round(loaded / total * 100) + '%'
           }
 
-          fetch('${file['@microsoft.graph.downloadUrl']}').then(response => {
+          fetch('${file.url}').then(response => {
             if (!response.ok) {
               loadingLabel.innerHTML = '😟 ' + response.status + ' ' + response.statusText
               throw Error(response.status + ' ' + response.statusText)
@@ -112,7 +112,7 @@ function renderPDFPreview(file) {
  */
 function renderImage(file) {
   return `<div class="image-wrapper">
-            <img data-zoomable src="${file['@microsoft.graph.downloadUrl']}" alt="${file.name}" style="width: 100%; height: auto; position: relative;"></img>
+            <img data-zoomable src="${file.url}" alt="${file.name}" style="width: 100%; height: auto; position: relative;"></img>
           </div>`
 }
 
@@ -129,7 +129,7 @@ function renderVideoPlayer(file, fileExt) {
             container: document.getElementById('dplayer'),
             theme: '#0070f3',
             video: {
-              url: '${file['@microsoft.graph.downloadUrl']}',
+              url: '${file.url}',
               type: '${fileExt}'
             }
           })
@@ -149,7 +149,7 @@ function renderAudioPlayer(file) {
             theme: '#0070f3',
             audio: [{
               name: '${file.name}',
-              url: '${file['@microsoft.graph.downloadUrl']}'
+              url: '${file.url}'
             }]
           })
           </script>`
@@ -175,12 +175,12 @@ function renderUnsupportedView(fileExt) {
 async function renderPreview(file, fileExt, cacheUrl) {
   if (cacheUrl) {
     // This will change your download url too! (proxied download)
-    file['@microsoft.graph.downloadUrl'] = cacheUrl
+    file.url = cacheUrl
   }
 
   switch (extensions[fileExt]) {
     case preview.markdown:
-      return await renderMarkdown(file['@microsoft.graph.downloadUrl'], '', 'style="margin-top: 0;"')
+      return await renderMarkdown(file.url, '', 'style="margin-top: 0;"')
 
     case preview.text:
       return await renderCodePreview(file, '')
@@ -217,7 +217,7 @@ export async function renderFilePreview(file, path, fileExt, cacheUrl) {
         'download-button-container',
         el(
           'a',
-          ['class="download-button"', `href="${file['@microsoft.graph.downloadUrl']}"`, 'data-turbolinks="false"'],
+          ['class="download-button"', `href="${file.download_url}"`, 'data-turbolinks="false"'],
           '<i class="far fa-arrow-alt-circle-down"></i> DOWNLOAD'
         )
       )

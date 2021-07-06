@@ -1,5 +1,4 @@
 import config from '../config/default'
-import { getAccessToken } from '../auth/onedrive'
 
 /**
  * Cloudflare cache instance
@@ -79,17 +78,4 @@ export async function handleFile(request, pathname, downloadUrl, { proxied = fal
     return setCache(request, fileSize, downloadUrl, proxied ? proxiedDownload : directDownload)
   }
   return (proxied ? proxiedDownload : directDownload)(downloadUrl)
-}
-
-export async function handleUpload(request, pathname, filename) {
-  const url = `${config.apiEndpoint.graph}/me/drive/root:${encodeURI(config.base) +
-    (pathname.slice(-1) === '/' ? pathname : pathname + '/')}${filename}:/content`
-  return await fetch(url, {
-    method: 'PUT',
-    headers: {
-      Authorization: `bearer ${await getAccessToken()}`,
-      ...request.headers
-    },
-    body: request.body
-  })
 }
