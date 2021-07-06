@@ -88,7 +88,7 @@ _不是特别长的中文版部署指南预警！_
 
 ### 生成 AliYunDrive API 令牌
 
-1.  登录阿里云盘网页版，按 `F12` 打开开发者工具，找到 `Console` 选项卡，执行 `JSON.parse(localStorage.token).refresh_token` 得到 `refresh_token`
+1.  ~~登录阿里云盘网页版，按 `F12` 打开开发者工具，找到 `Console` 选项卡，执行 `JSON.parse(localStorage.token).refresh_token` 得到 `refresh_token`~~ 此方法获取的 token 会有防盗链检测，请使用 https://media.cooluc.com/decode_token/ 获取。
 
    ![](assets/refresh_token.png)
 
