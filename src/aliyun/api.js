@@ -37,40 +37,50 @@ export async function getFilebyPath(pathname, accessToken, thumbnail) {
 
     const aliyunFileEndpoint = `${config.apiEndpoint.api}/file/list`
 
-    const resp = await fetch(aliyunFileEndpoint, {
-        method: 'POST',
-        body: JSON.stringify({
-            "drive_id": config.drive_id,
-            "fields": "*",
-            "order_by": "created_at",
-            "parent_file_id": data.file_id
-        }),
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
-    })
-
-    if (resp.ok) {
-        const data = await resp.json()
-        const name = decodeURI(pathname.match(/[^\/]*?$/)[0])
-
-        for (let i of data.items) {
-            if (name === i.name) {
-                await BUCKET.put(pathname, i.file_id)
-                r.data = i
-                return r
+    let marker = ''
+    do {
+        const resp = await fetch(aliyunFileEndpoint, {
+            method: 'POST',
+            body: JSON.stringify({
+                "drive_id": config.drive_id,
+                "fields": "*",
+                "limit": 200,
+                "marker": marker,
+                "order_by": "created_at",
+                "parent_file_id": data.file_id
+            }),
+            headers: {
+                Authorization: `Bearer ${accessToken}`
             }
+        })
+
+        if (resp.ok) {
+            const data = await resp.json()
+            const name = decodeURI(pathname.match(/[^\/]*?$/)[0])
+
+            for (let i of data.items) {
+                if (name === i.name) {
+                    await BUCKET.put(pathname, i.file_id)
+                    r.data = i
+                    return r
+                }
+            }
+
+            marker = data.next_marker
+        } else {
+            r.error = resp.status
+            r.data = await resp.json()
+            return r
         }
-        r.error = 404
-        r.data = {
-            code: "NotFound.File",
-            message: "The resource file cannot be found. file not exist"
-        }
-    } else {
-        r.error = resp.status
-        r.data = await resp.json()
-        return r
     }
+    while (marker);
+
+    r.error = 404
+    r.data = {
+        code: "NotFound.File",
+        message: "The resource file cannot be found. file not exist"
+    }
+    return r
 }
 
 async function getFilebyID(id, accessToken, thumbnail) {

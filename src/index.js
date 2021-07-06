@@ -56,7 +56,7 @@ async function handleRequest(request) {
 
   const { pathname, searchParams } = new URL(request.url)
   const neoPathname = pathname.replace(/pagination$/, '')
-  // const isRequestFolder = pathname.endsWith('/') || searchParams.get('page')
+  const isRequestFolder = pathname.endsWith('/') || searchParams.get('page')
 
   const rawFile = searchParams.get('raw') !== null
   const thumbnail = config.thumbnail ? searchParams.get('thumbnail') : false
@@ -85,6 +85,14 @@ async function handleRequest(request) {
     }
   }
 
+  // 302 all folder requests that doesn't end with / or file requests that end with /
+  if ((data.type === 'folder') === (!isRequestFolder)) {
+    if (!isRequestFolder) {
+      return Response.redirect(request.url + '/', 302)
+    } else {
+      return Response.redirect(request.url.slice(0, -1), 302)
+    }
+  }
 
   if (data.type === 'file') {
     if (thumbnail) {
