@@ -29,6 +29,11 @@ function readableFileSize(bytes, si) {
   return bytes.toFixed(1) + ' ' + units[u]
 }
 
+function readableUpdatedTime(updated) {
+  const d = new Date(updated)
+  return d.toLocaleDateString('zh-CN')
+}
+
 /**
  * Render Folder Index
  *
@@ -40,14 +45,24 @@ export async function renderFolderView(items, path, request) {
 
   const el = (tag, attrs, content) => `<${tag} ${attrs.join(' ')}>${content}</${tag}>`
   const div = (className, content) => el('div', [`class=${className}`], content)
-  const item = (icon, fileName, fileAbsoluteUrl, size, emojiIcon, noPreview) =>
+  const fileItem = (icon, fileName, fileAbsoluteUrl, size, noPreview) =>
     el(
       'a',
       [`href="${fileAbsoluteUrl}"`, 'class="item"', size ? `size="${size}"` : '', noPreview ? 'data-turbolinks="false"' : ''],
+      el('i', [`class="${icon}"`], '') +
+      fileName +
+      el('div', ['style="flex-grow: 1;"'], '') +
+      el('span', ['class="size"'], readableFileSize(size))
+    )
+
+  const folderItem = (icon, fileName, fileAbsoluteUrl, updated, emojiIcon) =>
+    el(
+      'a',
+      [`href="${fileAbsoluteUrl}"`, 'class="item"'],
       (emojiIcon ? el('i', ['style="font-style: normal"'], emojiIcon) : el('i', [`class="${icon}"`], '')) +
       fileName +
       el('div', ['style="flex-grow: 1;"'], '') +
-      (fileName === '..' ? '' : el('span', ['class="size"'], readableFileSize(size)))
+      (fileName === '..' ? '' : el('span', ['class="size"'], readableUpdatedTime(updated)))
     )
 
   const intro = `<div class="intro markdown-body" style="text-align: left; margin-top: 2rem;">
@@ -68,16 +83,16 @@ export async function renderFolderView(items, path, request) {
       el(
         'div',
         ['style="min-width: 600px"'],
-        (!isIndex ? item('far fa-folder', '..', `${path}..`) : '') +
+        (!isIndex ? folderItem('far fa-folder', '..', `${path}..`) : '') +
         items
           .map(i => {
             // Check if the current item is a folder or a file
             if ('folder' === i.type) {
               const emoji = emojiRegex().exec(i.name)
               if (emoji && !emoji.index) {
-                return item('', i.name.replace(emoji, '').trim(), `${path}${i.name}/`, i.updated_at, emoji[0])
+                return folderItem('', i.name.replace(emoji, '').trim(), `${path}${i.name}/`, i.updated_at, emoji[0])
               } else {
-                return item('far fa-folder', i.name, `${path}${i.name}/`, i.updated_at)
+                return folderItem('far fa-folder', i.name, `${path}${i.name}/`, i.updated_at)
               }
             } else if ('file' === i.type) {
               // Check if README.md exists
@@ -106,7 +121,7 @@ export async function renderFolderView(items, path, request) {
               } else {
                 fileIcon = `far ${fileIcon}`
               }
-              return item(fileIcon, i.name, `${path}${i.name}`, i.size, '', !(extension in extensions))
+              return fileItem(fileIcon, i.name, `${path}${i.name}`, i.size, !(extension in extensions))
             } else {
               console.log(`unknown item type ${i}`)
             }
