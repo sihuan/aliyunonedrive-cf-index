@@ -70,6 +70,10 @@ wrangler secret put AUTH_PASSWORD
 https://aliyun.sihuan.workers.dev/%F0%9F%A5%9F%20Some%20test%20files/nyancat.gif?raw
 ```
 
+### 🗄️ 缓存下载链接提升反应速度
+
+默认情况下为了提升反应速度，我们使用 KV 缓存了文件的下载直链以及文件夹的 `file_id`，如果你看到的文件/文件夹列表与实际不符，请添加 `?nocache` 强制刷新缓存。缓存的自动失效期是 `14400s` 与直链的最长有效期相同。
+
 ### 🖼️ 任意大小缩略图
 
 - 任意大小的图片缩略图：`?thumbnail=w_160` - `w` 指宽度，另外可选 `h`；`160` 指像素。

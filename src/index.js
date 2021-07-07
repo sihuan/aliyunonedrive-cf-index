@@ -59,10 +59,11 @@ async function handleRequest(request) {
   const isRequestFolder = pathname.endsWith('/') || searchParams.get('page')
 
   const rawFile = searchParams.get('raw') !== null
+  const noCache = searchParams.get('nocache') !== null
   const thumbnail = config.thumbnail ? searchParams.get('thumbnail') : false
   const proxied = config.proxyDownload ? searchParams.get('proxied') !== null : false
 
-  const { error, data } = await getFilebyPath(wrapPathName(neoPathname), accessToken, thumbnail)
+  const { error, data } = await getFilebyPath(wrapPathName(neoPathname), accessToken, thumbnail,noCache)
 
   if (error) {
     const body = JSON.stringify(data)
