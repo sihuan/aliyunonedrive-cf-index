@@ -43,7 +43,11 @@ export async function getFilebyPath(pathname, accessToken, thumbnail, noCache) {
         delete data.labels
         delete data.image_media_metadata
         delete data.video_media_metadata
-        await BUCKET.put(pathname, JSON.stringify(data), {expirationTtl: 14400})
+        let ttl = 144000
+        if (data.type == "file") {
+             ttl = 14400
+        }
+        await BUCKET.put(pathname, JSON.stringify(data), {expirationTtl: ttl})
         console.log(`Update path: ${decodeURI(pathname)} to storage.`)
         r.data = data
     } else {
