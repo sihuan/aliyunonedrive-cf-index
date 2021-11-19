@@ -1,0 +1,12 @@
+name: refresh the token
+on:
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Visit the home page
+        run: |
+          curl --request GET \
+          --url 'https://ali.sakuya.love'
